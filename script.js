@@ -35,6 +35,7 @@ const onAddItemSubmit = (element) => {
     if (checkIfItemExists(newItem)) {
       alert("That item already exists!");
       itemInput.value = "";
+      itemInput.focus();
       return;
     }
   }
