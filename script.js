@@ -3,6 +3,8 @@ const itemInput = document.getElementById("item-input");
 const itemList = document.getElementById("item-list");
 const clearBtn = document.getElementById("clear");
 const itemFilter = document.getElementById("filter");
+const formBtn = itemForm.querySelector("button");
+let isEditMode = false;
 
 const displayItems = () => {
   const itemsFromStorage = getItemsFromStorage();
@@ -20,6 +22,15 @@ const onAddItemSubmit = (element) => {
   if (newItem === "") {
     alert("Please add an item");
     return;
+  }
+
+  if (isEditMode) {
+    const itemToEdit = itemList.querySelector(".edit-mode");
+
+    removeItemFromStorage(itemToEdit.textContent);
+    itemToEdit.classList.remove("edit-mode");
+    itemToEdit.remove();
+    isEditMode = false;
   }
 
   // Create item DOM element
@@ -83,7 +94,22 @@ const getItemsFromStorage = () => {
 const onClickItem = (event) => {
   if (event.target.parentElement.classList.contains("remove-item")) {
     removeitem(event.target.parentElement.parentElement);
+  } else {
+    setItemToEdit(event.target);
   }
+};
+
+const setItemToEdit = (item) => {
+  isEditMode = true;
+
+  itemList
+    .querySelectorAll("li")
+    .forEach((item) => item.classList.remove("edit-mode"));
+
+  item.classList.add("edit-mode");
+  formBtn.innerHTML = "<i class='fa-solid fa-pen'></i> Update Item";
+  formBtn.style.backgroundColor = "#228b22";
+  itemInput.value = item.textContent;
 };
 
 const removeitem = (item) => {
@@ -127,6 +153,8 @@ const filterItems = (element) => {
 };
 
 const checkUI = () => {
+  itemInput.value = "";
+
   const items = itemList.querySelectorAll("li");
 
   if (items.length === 0) {
@@ -136,6 +164,11 @@ const checkUI = () => {
     clearBtn.style.display = "block";
     itemFilter.style.display = "block";
   }
+
+  formBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Item';
+  formBtn.style.backgroundColor = "#333";
+
+  isEditMode = false;
 };
 
 const init = () => {
